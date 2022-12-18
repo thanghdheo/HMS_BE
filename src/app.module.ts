@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SupabaseModule } from './common/supabase';
 import { MasterDataModule } from './master_data/master_data.module';
+import { WorkflowModule } from './workflow/workflow.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { MasterDataModule } from './master_data/master_data.module';
       isGlobal: true, // no need to import into other modules
     }),
     SupabaseModule,
-    MasterDataModule
+    MasterDataModule,
+    WorkflowModule
   ],
   controllers: [AppController],
   providers: [AppService],
