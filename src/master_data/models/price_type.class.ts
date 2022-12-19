@@ -1,6 +1,6 @@
 export class PriceType {
-  id?: number;
-  name: string;
-  code: string;
-  active: boolean;
+  Id?: number;
+  Name: string;
+  Code: string;
+  Active: boolean;
 }

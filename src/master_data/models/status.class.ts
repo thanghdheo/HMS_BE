@@ -1,7 +1,7 @@
 export class RoomType {
-  id?: number;
-  name: string;
-  code: string;
-  color: string;
-  active: boolean;
+  Id?: number;
+  Name: string;
+  Code: string;
+  Color: string;
+  Active: boolean;
 }
