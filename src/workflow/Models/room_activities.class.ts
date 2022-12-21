@@ -1,5 +1,3 @@
-import { BaseDto } from 'src/common/models/base.dto';
-
 export class RoomActivities {
   Id: number;
   RoomId: number;
