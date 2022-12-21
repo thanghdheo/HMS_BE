@@ -10,6 +10,8 @@ import { Company } from '../models/company.class';
 import { Hotel } from '../models/hotel.class';
 import { Room } from '../models/room.class';
 import { Customer } from '../models/customer.class';
+import { Price } from '../models/price.class';
+import { Holiday } from '../models/holiday.class';
 
 @Injectable()
 export class MasterDataService {
@@ -458,4 +460,149 @@ export class MasterDataService {
     return _.isEmpty(data) ? 'fail' : 'success';
   }
   //#endregion
+
+  //#region Price
+  async getAllPrice(): Promise<any> {
+    let query = this.supabase
+      .getClient()
+      .from('Price')
+      .select('*', { count: 'exact' })
+      .eq('Active', true);
+    const { data, error, count } = await query;
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    let result = new DataResponse();
+    result.data = data;
+    result.count = count;
+    return result;
   }
+
+  async createPrice(prices: Price[]): Promise<any> {
+    const { data, error } = await this.supabase
+      .getClient()
+      .from('Price')
+      .insert(prices)
+      .select();
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    return data;
+  }
+
+  async updatePrice(prices: Price[]): Promise<any> {
+    const { data: data2, error: error2 } = await this.supabase
+      .getClient()
+      .from('Price')
+      .upsert(prices)
+      .select();
+    if (error2) {
+      throw new InternalServerErrorException(error2.message);
+    }
+    return data2;
+  }
+
+  async getPriceById(id: number): Promise<Price> {
+    const { data, error } = await this.supabase
+      .getClient()
+      .from('Price')
+      .select()
+      .eq('Id', id)
+      .eq('Active', true);
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    if (_.isEmpty(data)) {
+      throw new NotFoundException('Price not found');
+    }
+    return _.first(data);
+  }
+
+  async deletePriceById(ids: number[]): Promise<any> {
+    const { data, error } = await this.supabase
+      .getClient()
+      .from('Price')
+      .update({ Active: false })
+      .in('Id', ids)
+      .eq('Active', true)
+      .select();
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    return _.isEmpty(data) ? 'fail' : 'success';
+  }
+  //#endregion
+
+  //#region Holiday
+  async getAllHoliday(year: number): Promise<any> {
+    let query = this.supabase
+      .getClient()
+      .from('Holiday')
+      .select('*', { count: 'exact' })
+      .eq('Year', year)
+      .eq('Active', true);
+    const { data, error, count } = await query;
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    let result = new DataResponse();
+    result.data = data;
+    result.count = count;
+    return result;
+  }
+
+  async createHoliday(holidays: Holiday[]): Promise<any> {
+    const { data, error } = await this.supabase
+      .getClient()
+      .from('Holiday')
+      .insert(holidays)
+      .select();
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    return data;
+  }
+
+  async updateHoliday(holidays: Holiday[]): Promise<any> {
+    const { data: data2, error: error2 } = await this.supabase
+      .getClient()
+      .from('Holiday')
+      .upsert(holidays)
+      .select();
+    if (error2) {
+      throw new InternalServerErrorException(error2.message);
+    }
+    return data2;
+  }
+
+  async getHolidayById(id: number): Promise<Holiday> {
+    const { data, error } = await this.supabase
+      .getClient()
+      .from('Holiday')
+      .select()
+      .eq('Id', id)
+      .eq('Active', true);
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    if (_.isEmpty(data)) {
+      throw new NotFoundException('Holiday not found');
+    }
+    return _.first(data);
+  }
+
+  async deleteHolidayById(ids: number[]): Promise<any> {
+    const { data, error } = await this.supabase
+      .getClient()
+      .from('Holiday')
+      .update({ Active: false })
+      .in('Id', ids)
+      .eq('Active', true)
+      .select();
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    return _.isEmpty(data) ? 'fail' : 'success';
+  }
+  //#endregion
+}

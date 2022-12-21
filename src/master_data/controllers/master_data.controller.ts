@@ -12,6 +12,8 @@ import { Company } from '../models/company.class';
 import { Hotel } from '../models/hotel.class';
 import { Room } from '../models/room.class';
 import { Customer } from '../models/customer.class';
+import { Price } from '../models/price.class';
+import { Holiday } from '../models/holiday.class';
 
 @Controller('master-data')
 export class MasterDataController {
@@ -223,6 +225,91 @@ export class MasterDataController {
   deleteCustomerById(@Body() data): any {
     this.logger.log('delete Customer By Ids');
     return this.masterDataService.deleteCustomerById(data.Ids);
+  }
+  //#endregion
+
+  //#region Price
+  @Get('getAllPrice')
+  getAllPrice() {
+    this.logger.log('GET all Price');
+    return this.masterDataService.getAllPrice();
+  }
+  @Post('createPrice')
+  createPrice(@Body() prices: Price[]): any {
+    this.logger.log('Create Price');
+    var companyId = 1;
+    prices.forEach((element) => {
+      element.CompanyId = companyId;
+    });
+    return this.masterDataService.createPrice(prices);
+  }
+
+  @Post('updatePrice')
+  updatePrice(@Body() prices: Price[]): any {
+    this.logger.log('Update Price');
+    var companyId = 1;
+    prices.forEach((element) => {
+      element.CompanyId = companyId;
+    });
+    return this.masterDataService.updatePrice(prices);
+  }
+
+  @Get('getPriceById/:id')
+  getPriceById(@Param('id') id: string): any {
+    this.logger.log('get Price By Id');
+    const PriceId = parseInt(id);
+    return this.masterDataService.getPriceById(PriceId);
+  }
+
+  @Post('deletePriceById')
+  deletePriceById(@Body() data): any {
+    this.logger.log('delete Price By Ids');
+    return this.masterDataService.deletePriceById(data.Ids);
+  }
+  //#endregion
+
+  //#region Holiday
+  @Get('getAllHoliday')
+  getAllHoliday(
+    @Query()
+    query: {
+      year: number;
+    },
+  ) {
+    this.logger.log('GET all Holiday');
+    return this.masterDataService.getAllHoliday(query.year);
+  }
+  @Post('createHoliday')
+  createHoliday(@Body() holidays: Holiday[]): any {
+    this.logger.log('Create Holiday');
+    var companyId = 1;
+    holidays.forEach((element) => {
+      element.CompanyId = companyId;
+    });
+    return this.masterDataService.createHoliday(holidays);
+  }
+
+  @Post('updateHoliday')
+  updateHoliday(@Body() holidays: Holiday[]): any {
+    this.logger.log('Update Holiday');
+    var companyId = 1;
+    holidays.forEach((element) => {
+      element.CompanyId = companyId;
+    });
+    return this.masterDataService.updateHoliday(holidays);
+  }
+
+  @Get('getHolidayById/:id')
+  getHolidayById(@Param('id') id: string): any {
+    this.logger.log('get Holiday By Id');
+    const HolidayId = parseInt(id);
+    return this.masterDataService.getHolidayById(HolidayId);
+  }
+
+  @Post('deleteHolidayById')
+  deleteHolidayById(@Body() data): any {
+    this.logger.log('delete Holiday By Ids');
+    return this.masterDataService.deleteHolidayById(data.Ids);
   }
   //#endregion
 }
