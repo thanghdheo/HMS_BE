@@ -12,12 +12,13 @@ import { Room } from '../models/room.class';
 import { Customer } from '../models/customer.class';
 import { Price } from '../models/price.class';
 import { Holiday } from '../models/holiday.class';
+import { Status } from '../models/status.class';
 
 @Injectable()
 export class MasterDataService {
   constructor(private readonly supabase: Supabase) {}
 
-  //#region  Company
+  //#region Company
   async getAllCompany(
     keywords: string,
     limit: number,
@@ -113,7 +114,7 @@ export class MasterDataService {
   }
   //#endregion
 
-  //#region  Hotel
+  //#region Hotel
   async getAllHotel(
     companyId: number,
     keywords: string,
@@ -261,9 +262,25 @@ export class MasterDataService {
     return result;
   }
 
+  async getStatusByCode(code: string): Promise<Status> {
+    const { data, error } = await this.supabase
+      .getClient()
+      .from('Status')
+      .select()
+      .eq('Code', code)
+      .eq('Active', true);
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    if (_.isEmpty(data)) {
+      throw new NotFoundException('Status not found');
+    }
+    return _.first(data);
+  }
+
   //#endregion
 
-  //#region  Room
+  //#region Room
   async getAllRoom(
     companyId: number,
     hotelId: number,
@@ -274,7 +291,9 @@ export class MasterDataService {
     let query = this.supabase
       .getClient()
       .from('Room')
-      .select('*', { count: 'exact' })
+      .select('*, Status: StatusId (*), RoomActivities: RoomActivityId (*)', {
+        count: 'exact',
+      })
       .or(`Code.ilike.%${keywords}%,Name.ilike.%${keywords}%`)
       .eq('CompanyId', companyId)
       .eq('HotelId', hotelId)
@@ -336,7 +355,7 @@ export class MasterDataService {
     const { data, error } = await this.supabase
       .getClient()
       .from('Room')
-      .select()
+      .select('*, Status: StatusId (*), RoomActivities: RoomActivityId (*)')
       .eq('Id', id)
       .eq('Active', true);
     if (error) {
@@ -363,7 +382,7 @@ export class MasterDataService {
   }
   //#endregion
 
-  //#region  Customer
+  //#region Customer
   async getAllCustomer(
     keywords: string,
     limit: number,

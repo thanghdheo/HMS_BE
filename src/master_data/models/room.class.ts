@@ -9,4 +9,5 @@ export class Room extends BaseDto {
   Floor: number;
   StatusId: number;
   Beds: number;
+  RoomActivityId?: number;
 }

@@ -1,4 +1,4 @@
-export class RoomType {
+export class Status {
   Id?: number;
   Name: string;
   Code: string;

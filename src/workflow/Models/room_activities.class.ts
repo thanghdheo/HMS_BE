@@ -9,4 +9,5 @@ export class RoomActivities {
   SubFee: number;
   TotalPrice: number;
   Description: string;
+  Deposit: number;
 }
