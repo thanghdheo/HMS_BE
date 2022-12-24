@@ -291,9 +291,12 @@ export class MasterDataService {
     let query = this.supabase
       .getClient()
       .from('Room')
-      .select('*, Status: StatusId (*), RoomActivities: RoomActivityId (*)', {
-        count: 'exact',
-      })
+      .select(
+        '*, Status: StatusId (*), RoomActivities: RoomActivityId (*), RoomType: TypeId (*), Hotel: HotelId (*)',
+        {
+          count: 'exact',
+        },
+      )
       .or(`Code.ilike.%${keywords}%,Name.ilike.%${keywords}%`)
       .eq('CompanyId', companyId)
       .eq('HotelId', hotelId)
@@ -355,7 +358,9 @@ export class MasterDataService {
     const { data, error } = await this.supabase
       .getClient()
       .from('Room')
-      .select('*, Status: StatusId (*), RoomActivities: RoomActivityId (*)')
+      .select(
+        '*, Status: StatusId (*), RoomActivities: RoomActivityId (*), RoomType: TypeId (*), Hotel: HotelId (*)',
+      )
       .eq('Id', id)
       .eq('Active', true);
     if (error) {

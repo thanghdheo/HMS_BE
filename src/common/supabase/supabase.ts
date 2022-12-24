@@ -1,6 +1,7 @@
 import {
   Inject,
   Injectable,
+  InternalServerErrorException,
   Logger,
   Scope,
 } from '@nestjs/common';
@@ -10,7 +11,9 @@ import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { JwtService } from '@nestjs/jwt';
 import * as _ from 'lodash';
-import { HttpService } from '@nestjs/axios';
+import { JwtPayload } from 'src/auth/models/jwt_payload.class';
+import { User } from 'src/auth/models/user.class';
+import { ExtractJwt } from 'passport-jwt';
 
 @Injectable({ scope: Scope.REQUEST })
 export class Supabase {
@@ -21,7 +24,6 @@ export class Supabase {
     @Inject(REQUEST) private readonly request: Request,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-    private readonly httpService: HttpService,
   ) {}
 
   getClient() {
@@ -38,22 +40,32 @@ export class Supabase {
       this.configService.get('SERVICE_ROLE_KEY'),
     );
 
-    // this.clientInstance.auth.setAuth(
-    //   ExtractJwt.fromAuthHeaderAsBearerToken()(this.request),
-    // );
-    // this.logger.log('auth has been set!');
+    this.clientInstance.auth.setSession(
+      ExtractJwt.fromAuthHeaderAsBearerToken()(this.request),
+    );
+    this.logger.log('auth has been set!');
 
     return this.clientInstance;
   }
 
-  getServiceClient() {
-    this.logger.log('getting supabase server only');
+  async getCurrentUser(): Promise<User> {
+    if (!this.clientInstance) {
+      this.clientInstance = createClient(
+        this.configService.get('SUPABASE_URL'),
+        this.configService.get('SERVICE_ROLE_KEY'),
+      );
+    }
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(this.request);
+    const decodedJwtAccessToken = this.jwtService.decode(token) as JwtPayload;
+    const { data: dataUser, error: errorUser } = await this.clientInstance
+      .from('User')
+      .select()
+      .eq('UserId', decodedJwtAccessToken.sub)
+      .eq('Active', true);
+    if (errorUser || _.isEmpty(dataUser)) {
+      throw new InternalServerErrorException('Verify User Fail');
+    }
 
-    this.clientInstance = createClient(
-      this.configService.get('SUPABASE_URL'),
-      this.configService.get('SERVICE_ROLE_KEY'),
-    );
-
-    return this.clientInstance;
+    return _.first(dataUser);
   }
 }

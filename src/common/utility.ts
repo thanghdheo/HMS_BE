@@ -313,7 +313,7 @@ export class Utility {
     let stt = 1;
     sheet.columns = [
       { header: 'STT', key: 'stt', width: 5 },
-      { header: 'User Name', key: 'user_name', width: 20 },
+      { header: 'User Name', key: 'UserName', width: 20 },
       { header: 'Full Name', key: 'full_name', width: 40 },
       { header: 'Email', key: 'email', width: 40 },
       { header: 'Phone', key: 'phone', width: 40 },
@@ -331,7 +331,7 @@ export class Utility {
     data.map((m) => {
       sheet.addRow({
         stt: stt,
-        user_name: m.user_name,
+        UserName: m.UserName,
         full_name: m.first_name + ' ' + m.last_name,
         email: m.email,
         phone: m.phone,
