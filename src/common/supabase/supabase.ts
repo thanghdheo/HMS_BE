@@ -38,6 +38,12 @@ export class Supabase {
     this.clientInstance = createClient(
       this.configService.get('SUPABASE_URL'),
       this.configService.get('SERVICE_ROLE_KEY'),
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      },
     );
 
     this.clientInstance.auth.setSession(
@@ -48,11 +54,40 @@ export class Supabase {
     return this.clientInstance;
   }
 
+  getServerClient() {
+    this.logger.log('getting supabase client...');
+    if (this.clientInstance) {
+      this.logger.log('client exists - returning for current Scope.REQUEST');
+      return this.clientInstance;
+    }
+
+    this.logger.log('initialising new supabase client for new Scope.REQUEST');
+
+    this.clientInstance = createClient(
+      this.configService.get('SUPABASE_URL'),
+      this.configService.get('SERVICE_ROLE_KEY'),
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      },
+    );
+
+    return this.clientInstance;
+  }
+
   async getCurrentUser(): Promise<User> {
     if (!this.clientInstance) {
       this.clientInstance = createClient(
         this.configService.get('SUPABASE_URL'),
         this.configService.get('SERVICE_ROLE_KEY'),
+        {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false,
+          },
+        },
       );
     }
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(this.request);
