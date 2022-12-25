@@ -14,11 +14,15 @@ import { Room } from '../models/room.class';
 import { Customer } from '../models/customer.class';
 import { Price } from '../models/price.class';
 import { Holiday } from '../models/holiday.class';
+import { Supabase } from 'src/common/supabase';
 
 @Controller('master-data')
 export class MasterDataController {
   private readonly logger = new Logger(MasterDataController.name);
-  constructor(private readonly masterDataService: MasterDataService) {}
+  constructor(
+    private readonly masterDataService: MasterDataService,
+    private readonly supabase: Supabase,
+  ) {}
 
   //#region Company
   @Get('getAllCompany')
@@ -65,7 +69,7 @@ export class MasterDataController {
 
   //#region Hotel
   @Get('getAllHotel')
-  getAllHotel(
+  async getAllHotel(
     @Query()
     query: {
       keywords: string;
@@ -74,7 +78,7 @@ export class MasterDataController {
     },
   ) {
     this.logger.log('GET all Hotel');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     return this.masterDataService.getAllHotel(
       companyId,
       query.keywords,
@@ -83,17 +87,17 @@ export class MasterDataController {
     );
   }
   @Post('createHotel')
-  createHotel(@Body() hotel: Hotel): any {
+  async createHotel(@Body() hotel: Hotel): Promise<any> {
     this.logger.log('Create Hotel');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     hotel.CompanyId = companyId;
     return this.masterDataService.createHotel(hotel);
   }
 
   @Post('updateHotel')
-  updateHotel(@Body() hotel: Hotel): any {
+  async updateHotel(@Body() hotel: Hotel): Promise<any> {
     this.logger.log('Update Hotel');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     hotel.CompanyId = companyId;
     return this.masterDataService.updateHotel(hotel);
   }
@@ -136,7 +140,7 @@ export class MasterDataController {
 
   //#region Room
   @Get('getAllRoom')
-  getAllRoom(
+  async getAllRoom(
     @Query()
     query: {
       hotelId: number;
@@ -146,7 +150,7 @@ export class MasterDataController {
     },
   ) {
     this.logger.log('GET all Room');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     return this.masterDataService.getAllRoom(
       companyId,
       query.hotelId,
@@ -156,17 +160,17 @@ export class MasterDataController {
     );
   }
   @Post('createRoom')
-  createRoom(@Body() room: Room): any {
+  async createRoom(@Body() room: Room): Promise<any> {
     this.logger.log('Create Room');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     room.CompanyId = companyId;
     return this.masterDataService.createRoom(room);
   }
 
   @Post('updateRoom')
-  updateRoom(@Body() room: Room): any {
+  async updateRoom(@Body() room: Room): Promise<any> {
     this.logger.log('Update Room');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     room.CompanyId = companyId;
     return this.masterDataService.updateRoom(room);
   }
@@ -235,9 +239,9 @@ export class MasterDataController {
     return this.masterDataService.getAllPrice();
   }
   @Post('createPrice')
-  createPrice(@Body() prices: Price[]): any {
+  async createPrice(@Body() prices: Price[]): Promise<any> {
     this.logger.log('Create Price');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     prices.forEach((element) => {
       element.CompanyId = companyId;
     });
@@ -245,9 +249,9 @@ export class MasterDataController {
   }
 
   @Post('updatePrice')
-  updatePrice(@Body() prices: Price[]): any {
+  async updatePrice(@Body() prices: Price[]): Promise<any> {
     this.logger.log('Update Price');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     prices.forEach((element) => {
       element.CompanyId = companyId;
     });
@@ -280,9 +284,9 @@ export class MasterDataController {
     return this.masterDataService.getAllHoliday(query.year);
   }
   @Post('createHoliday')
-  createHoliday(@Body() holidays: Holiday[]): any {
+  async createHoliday(@Body() holidays: Holiday[]): Promise<any> {
     this.logger.log('Create Holiday');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     holidays.forEach((element) => {
       element.CompanyId = companyId;
     });
@@ -290,9 +294,9 @@ export class MasterDataController {
   }
 
   @Post('updateHoliday')
-  updateHoliday(@Body() holidays: Holiday[]): any {
+  async updateHoliday(@Body() holidays: Holiday[]): Promise<any> {
     this.logger.log('Update Holiday');
-    var companyId = 1;
+    var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     holidays.forEach((element) => {
       element.CompanyId = companyId;
     });
