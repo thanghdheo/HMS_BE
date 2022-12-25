@@ -24,8 +24,7 @@ export class MasterDataService {
     limit: number,
     offset: number,
   ): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('Company')
       .select('*', { count: 'exact' })
       .or(`Code.ilike.%${keywords}%,Name.ilike.%${keywords}%`)
@@ -46,8 +45,7 @@ export class MasterDataService {
   }
 
   async createCompany(company: Company): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Company')
       .insert(company)
       .select();
@@ -60,8 +58,7 @@ export class MasterDataService {
   async updateCompany(company: Company): Promise<any> {
     var id = company.Id ? company.Id : 0;
     delete company.Id;
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Company')
       .select()
       .eq('Id', id);
@@ -71,8 +68,9 @@ export class MasterDataService {
     if (_.isEmpty(data)) {
       throw new NotFoundException('Company not found');
     }
-    const { data: data2, error: error2 } = await this.supabase
-      .getClient()
+    const { data: data2, error: error2 } = await (
+      await this.supabase.getClient()
+    )
       .from('Company')
       .update(company)
       .match({ Id: id })
@@ -84,8 +82,7 @@ export class MasterDataService {
   }
 
   async getCompanyById(id: number): Promise<Company> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Company')
       .select()
       .eq('Id', id)
@@ -100,8 +97,7 @@ export class MasterDataService {
   }
 
   async deleteCompanyById(ids: number[]): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Company')
       .update({ Active: false })
       .in('Id', ids)
@@ -121,8 +117,7 @@ export class MasterDataService {
     limit: number,
     offset: number,
   ): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('Hotel')
       .select('*', { count: 'exact' })
       .or(`Code.ilike.%${keywords}%,Name.ilike.%${keywords}%`)
@@ -144,8 +139,7 @@ export class MasterDataService {
   }
 
   async createHotel(hotel: Hotel): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Hotel')
       .insert(hotel)
       .select();
@@ -158,8 +152,7 @@ export class MasterDataService {
   async updateHotel(hotel: Hotel): Promise<any> {
     var id = hotel.Id ? hotel.Id : 0;
     delete hotel.Id;
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Hotel')
       .select()
       .eq('Id', id);
@@ -169,8 +162,9 @@ export class MasterDataService {
     if (_.isEmpty(data)) {
       throw new NotFoundException('Hotel not found');
     }
-    const { data: data2, error: error2 } = await this.supabase
-      .getClient()
+    const { data: data2, error: error2 } = await (
+      await this.supabase.getClient()
+    )
       .from('Hotel')
       .update(hotel)
       .match({ Id: id })
@@ -182,8 +176,7 @@ export class MasterDataService {
   }
 
   async getHotelById(id: number): Promise<Hotel> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Hotel')
       .select()
       .eq('Id', id)
@@ -198,8 +191,7 @@ export class MasterDataService {
   }
 
   async deleteHotelById(ids: number[]): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Hotel')
       .update({ Active: false })
       .in('Id', ids)
@@ -215,8 +207,7 @@ export class MasterDataService {
   //#region Master Data
 
   async getAllRoomType(): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('RoomType')
       .select('*', { count: 'exact' })
       .eq('Active', true);
@@ -231,8 +222,7 @@ export class MasterDataService {
   }
 
   async getAllStatus(): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('Status')
       .select('*', { count: 'exact' })
       .eq('Active', true);
@@ -247,8 +237,7 @@ export class MasterDataService {
   }
 
   async getAllPriceType(): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('PriceType')
       .select('*', { count: 'exact' })
       .eq('Active', true);
@@ -263,8 +252,7 @@ export class MasterDataService {
   }
 
   async getStatusByCode(code: string): Promise<Status> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Status')
       .select()
       .eq('Code', code)
@@ -288,8 +276,7 @@ export class MasterDataService {
     limit: number,
     offset: number,
   ): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('Room')
       .select(
         '*, Status: StatusId (*), RoomActivities: RoomActivityId (*), RoomType: TypeId (*), Hotel: HotelId (*)',
@@ -317,8 +304,7 @@ export class MasterDataService {
   }
 
   async createRoom(room: Room): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Room')
       .insert(room)
       .select();
@@ -331,8 +317,7 @@ export class MasterDataService {
   async updateRoom(room: Room): Promise<any> {
     var id = room.Id ? room.Id : 0;
     delete room.Id;
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Room')
       .select()
       .eq('Id', id);
@@ -342,8 +327,9 @@ export class MasterDataService {
     if (_.isEmpty(data)) {
       throw new NotFoundException('Room not found');
     }
-    const { data: data2, error: error2 } = await this.supabase
-      .getClient()
+    const { data: data2, error: error2 } = await (
+      await this.supabase.getClient()
+    )
       .from('Room')
       .update(room)
       .match({ Id: id })
@@ -355,8 +341,7 @@ export class MasterDataService {
   }
 
   async getRoomById(id: number): Promise<Room> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Room')
       .select(
         '*, Status: StatusId (*), RoomActivities: RoomActivityId (*), RoomType: TypeId (*), Hotel: HotelId (*)',
@@ -373,8 +358,7 @@ export class MasterDataService {
   }
 
   async deleteRoomById(ids: number[]): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Room')
       .update({ Active: false })
       .in('Id', ids)
@@ -393,8 +377,7 @@ export class MasterDataService {
     limit: number,
     offset: number,
   ): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('Customer')
       .select('*', { count: 'exact' })
       .or(
@@ -417,8 +400,7 @@ export class MasterDataService {
   }
 
   async createCustomer(customer: Customer): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Customer')
       .insert(customer)
       .select();
@@ -431,8 +413,7 @@ export class MasterDataService {
   async updateCustomer(customer: Customer): Promise<any> {
     var id = customer.Id ? customer.Id : 0;
     delete customer.Id;
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Customer')
       .select()
       .eq('Id', id);
@@ -442,8 +423,9 @@ export class MasterDataService {
     if (_.isEmpty(data)) {
       throw new NotFoundException('Customer not found');
     }
-    const { data: data2, error: error2 } = await this.supabase
-      .getClient()
+    const { data: data2, error: error2 } = await (
+      await this.supabase.getClient()
+    )
       .from('Customer')
       .update(customer)
       .match({ Id: id })
@@ -455,8 +437,7 @@ export class MasterDataService {
   }
 
   async getCustomerById(id: number): Promise<Customer> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Customer')
       .select()
       .eq('Id', id)
@@ -471,8 +452,7 @@ export class MasterDataService {
   }
 
   async deleteCustomerById(ids: number[]): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Customer')
       .update({ Active: false })
       .in('Id', ids)
@@ -487,8 +467,7 @@ export class MasterDataService {
 
   //#region Price
   async getAllPrice(): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('Price')
       .select('*', { count: 'exact' })
       .eq('Active', true);
@@ -503,8 +482,7 @@ export class MasterDataService {
   }
 
   async createPrice(prices: Price[]): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Price')
       .insert(prices)
       .select();
@@ -515,8 +493,9 @@ export class MasterDataService {
   }
 
   async updatePrice(prices: Price[]): Promise<any> {
-    const { data: data2, error: error2 } = await this.supabase
-      .getClient()
+    const { data: data2, error: error2 } = await (
+      await this.supabase.getClient()
+    )
       .from('Price')
       .upsert(prices)
       .select();
@@ -527,8 +506,7 @@ export class MasterDataService {
   }
 
   async getPriceById(id: number): Promise<Price> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Price')
       .select()
       .eq('Id', id)
@@ -543,8 +521,7 @@ export class MasterDataService {
   }
 
   async deletePriceById(ids: number[]): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Price')
       .update({ Active: false })
       .in('Id', ids)
@@ -559,8 +536,7 @@ export class MasterDataService {
 
   //#region Holiday
   async getAllHoliday(year: number): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('Holiday')
       .select('*', { count: 'exact' })
       .eq('Year', year)
@@ -576,8 +552,7 @@ export class MasterDataService {
   }
 
   async createHoliday(holidays: Holiday[]): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Holiday')
       .insert(holidays)
       .select();
@@ -588,8 +563,9 @@ export class MasterDataService {
   }
 
   async updateHoliday(holidays: Holiday[]): Promise<any> {
-    const { data: data2, error: error2 } = await this.supabase
-      .getClient()
+    const { data: data2, error: error2 } = await (
+      await this.supabase.getClient()
+    )
       .from('Holiday')
       .upsert(holidays)
       .select();
@@ -600,8 +576,7 @@ export class MasterDataService {
   }
 
   async getHolidayById(id: number): Promise<Holiday> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Holiday')
       .select()
       .eq('Id', id)
@@ -616,8 +591,7 @@ export class MasterDataService {
   }
 
   async deleteHolidayById(ids: number[]): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('Holiday')
       .update({ Active: false })
       .in('Id', ids)

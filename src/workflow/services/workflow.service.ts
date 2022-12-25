@@ -23,8 +23,7 @@ export class WorkflowService {
     if (roomActivities.TimeIn > timeNow) statusCode = StatusCode.BOOKED;
     var status = await this.masterDataService.getStatusByCode(statusCode);
 
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('RoomActivities')
       .insert(roomActivities)
       .select();
@@ -42,8 +41,7 @@ export class WorkflowService {
   async checkOut(roomActivities: RoomActivities): Promise<any> {
     var id = roomActivities.Id ? roomActivities.Id : 0;
     delete roomActivities.Id;
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('RoomActivities')
       .select()
       .eq('Id', id);
@@ -62,8 +60,9 @@ export class WorkflowService {
     room.RoomActivityId = roomActivities.Id;
     await this.masterDataService.updateRoom(room);
 
-    const { data: data2, error: error2 } = await this.supabase
-      .getClient()
+    const { data: data2, error: error2 } = await (
+      await this.supabase.getClient()
+    )
       .from('RoomActivities')
       .update(roomActivities)
       .match({ Id: id })
@@ -75,8 +74,7 @@ export class WorkflowService {
   }
 
   async getRoomActivitiesById(id: number): Promise<RoomActivities> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('RoomActivities')
       .select()
       .eq('Id', id);
@@ -99,8 +97,7 @@ export class WorkflowService {
     room.RoomActivityId = null;
     await this.masterDataService.updateRoom(room);
 
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('RoomActivities')
       .update({ TimeOut: new Date() })
       .eq('Id', id)

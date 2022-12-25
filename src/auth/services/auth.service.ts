@@ -73,8 +73,9 @@ export class AuthService {
     oldPassword: string,
     newPassword: string,
   ): Promise<any> {
-    const { data: dataUser, error: errorUser } = await this.supabase
-      .getClient()
+    const { data: dataUser, error: errorUser } = await (
+      await this.supabase.getClient()
+    )
       .from('User')
       .select()
       .eq('Id', id)
@@ -87,7 +88,9 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    const { error } = await this.supabase.getClient().auth.signInWithPassword({
+    const { error } = await (
+      await this.supabase.getClient()
+    ).auth.signInWithPassword({
       email: _.first(dataUser).Email,
       password: oldPassword,
     });
@@ -96,11 +99,11 @@ export class AuthService {
       throw new InternalServerErrorException(error.message);
     }
 
-    const { error: errorUpdate } = await this.supabase
-      .getClient()
-      .auth.admin.updateUserById(_.first(dataUser).Email, {
-        password: newPassword,
-      });
+    const { error: errorUpdate } = await (
+      await this.supabase.getClient()
+    ).auth.admin.updateUserById(_.first(dataUser).Email, {
+      password: newPassword,
+    });
     if (errorUpdate) {
       throw new InternalServerErrorException(errorUpdate.message);
     }
@@ -113,8 +116,7 @@ export class AuthService {
     limit: number,
     offset: number,
   ): Promise<any> {
-    let query = this.supabase
-      .getClient()
+    let query = (await this.supabase.getClient())
       .from('User')
       .select('*', { count: 'exact' })
       .or(
@@ -137,18 +139,17 @@ export class AuthService {
   }
 
   async createUser(user: User): Promise<any> {
-    const { data: dataSupabase, error: errorSupabase } = await this.supabase
-      .getClient()
-      .auth.signUp({
-        email: user.Email,
-        password: '123456',
-      });
+    const { data: dataSupabase, error: errorSupabase } = await (
+      await this.supabase.getClient()
+    ).auth.signUp({
+      email: user.Email,
+      password: '123456',
+    });
     if (errorSupabase) {
       throw new InternalServerErrorException(errorSupabase.message);
     }
     user.UserId = dataSupabase.user.id;
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('User')
       .insert(user)
       .select();
@@ -161,8 +162,7 @@ export class AuthService {
   async updateUser(user: User): Promise<any> {
     var id = user.Id ? user.Id : 0;
     delete user.Id;
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('User')
       .select()
       .eq('Id', id);
@@ -172,8 +172,9 @@ export class AuthService {
     if (_.isEmpty(data)) {
       throw new NotFoundException('User not found');
     }
-    const { data: data2, error: error2 } = await this.supabase
-      .getClient()
+    const { data: data2, error: error2 } = await (
+      await this.supabase.getClient()
+    )
       .from('User')
       .update(user)
       .match({ Id: id })
@@ -185,8 +186,7 @@ export class AuthService {
   }
 
   async getUserById(id: number): Promise<User> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('User')
       .select()
       .eq('Id', id)
@@ -201,8 +201,7 @@ export class AuthService {
   }
 
   async deleteUserById(ids: number[]): Promise<any> {
-    const { data, error } = await this.supabase
-      .getClient()
+    const { data, error } = await (await this.supabase.getClient())
       .from('User')
       .update({ Active: false })
       .in('Id', ids)

@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
   Scope,
 } from '@nestjs/common';
 import { Request } from 'express';
@@ -26,7 +27,7 @@ export class Supabase {
     private readonly jwtService: JwtService,
   ) {}
 
-  getClient() {
+  async getClient() {
     this.logger.log('getting supabase client...');
     if (this.clientInstance) {
       this.logger.log('client exists - returning for current Scope.REQUEST');
@@ -46,10 +47,12 @@ export class Supabase {
       },
     );
 
-    this.clientInstance.auth.setSession(
+    const { data, error } = await this.clientInstance.auth.getUser(
       ExtractJwt.fromAuthHeaderAsBearerToken()(this.request),
     );
-    this.logger.log('auth has been set!');
+    if (error || !data.user.id) {
+      throw new InternalServerErrorException(error.message);
+    }
 
     return this.clientInstance;
   }
