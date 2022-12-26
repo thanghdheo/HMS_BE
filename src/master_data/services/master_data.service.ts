@@ -245,6 +245,18 @@ export class MasterDataService {
     return data;
   }
 
+  async getAllPriceTypeByCalculate(): Promise<PriceType[]> {
+    let query = (await this.supabase.getClient())
+      .from('PriceType')
+      .select()
+      .eq('Active', true);
+    const { data, error } = await query;
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    return data;
+  }
+
   async getStatusByCode(code: string): Promise<Status> {
     const { data, error } = await (await this.supabase.getClient())
       .from('Status')
