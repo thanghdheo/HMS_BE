@@ -1,4 +1,5 @@
 import { BaseDto } from 'src/common/models/base.dto';
+import { RoomType } from './room_type.class';
 
 export class Room extends BaseDto {
   CompanyId: number;
@@ -10,4 +11,5 @@ export class Room extends BaseDto {
   StatusId: number;
   Beds: number;
   RoomActivityId?: number;
+  RoomType: RoomType;
 }

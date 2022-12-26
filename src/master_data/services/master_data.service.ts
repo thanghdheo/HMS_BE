@@ -13,6 +13,8 @@ import { Customer } from '../models/customer.class';
 import { Price } from '../models/price.class';
 import { Holiday } from '../models/holiday.class';
 import { Status } from '../models/status.class';
+import { PriceType } from '../models/price_type.class';
+import { RoomType } from '../models/room_type.class';
 
 @Injectable()
 export class MasterDataService {
@@ -206,49 +208,41 @@ export class MasterDataService {
 
   //#region Master Data
 
-  async getAllRoomType(): Promise<any> {
+  async getAllRoomType(): Promise<RoomType[]> {
     let query = (await this.supabase.getClient())
       .from('RoomType')
-      .select('*', { count: 'exact' })
+      .select()
       .eq('Active', true);
-    const { data, error, count } = await query;
+    const { data, error } = await query;
     if (error) {
       throw new InternalServerErrorException(error.message);
     }
-    let result = new DataResponse();
-    result.data = data;
-    result.count = count;
-    return result;
+    return data;
   }
 
-  async getAllStatus(): Promise<any> {
+  async getAllStatus(): Promise<Status[]> {
     let query = (await this.supabase.getClient())
       .from('Status')
-      .select('*', { count: 'exact' })
+      .select()
       .eq('Active', true);
-    const { data, error, count } = await query;
+    const { data, error } = await query;
     if (error) {
       throw new InternalServerErrorException(error.message);
     }
-    let result = new DataResponse();
-    result.data = data;
-    result.count = count;
-    return result;
+    return data;
   }
 
-  async getAllPriceType(): Promise<any> {
+  async getAllPriceType(): Promise<PriceType[]> {
     let query = (await this.supabase.getClient())
       .from('PriceType')
-      .select('*', { count: 'exact' })
+      .select()
+      .eq('Value', 0)
       .eq('Active', true);
-    const { data, error, count } = await query;
+    const { data, error } = await query;
     if (error) {
       throw new InternalServerErrorException(error.message);
     }
-    let result = new DataResponse();
-    result.data = data;
-    result.count = count;
-    return result;
+    return data;
   }
 
   async getStatusByCode(code: string): Promise<Status> {
@@ -271,6 +265,7 @@ export class MasterDataService {
   //#region Room
   async getAllRoom(
     companyId: number,
+    statusId: number,
     hotelId: number,
     keywords: string,
     limit: number,
@@ -288,6 +283,9 @@ export class MasterDataService {
       .eq('CompanyId', companyId)
       .eq('HotelId', hotelId)
       .eq('Active', true);
+    if (statusId) {
+      query = query.eq('StatusId', statusId);
+    }
     if (offset && limit) {
       const toValue = offset * limit;
       const fromValue = toValue - limit;
@@ -509,7 +507,28 @@ export class MasterDataService {
     const { data, error } = await (await this.supabase.getClient())
       .from('Price')
       .select()
-      .eq('Id', id)
+      .eq('PriceTypeId', id)
+      .eq('Active', true);
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    if (_.isEmpty(data)) {
+      throw new NotFoundException('Price not found');
+    }
+    return _.first(data);
+  }
+
+  async getPriceByPriceTypeId(
+    id: number,
+    companyId: number,
+    dayType: string,
+  ): Promise<Price> {
+    const { data, error } = await (await this.supabase.getClient())
+      .from('Price')
+      .select()
+      .eq('PriceTypeId', id)
+      .eq('DayType', dayType)
+      .eq('CompanyId', companyId)
       .eq('Active', true);
     if (error) {
       throw new InternalServerErrorException(error.message);
@@ -586,6 +605,20 @@ export class MasterDataService {
     }
     if (_.isEmpty(data)) {
       throw new NotFoundException('Holiday not found');
+    }
+    return _.first(data);
+  }
+
+  async getHolidayByDate(date: Date): Promise<Holiday> {
+    const { data, error } = await (await this.supabase.getClient())
+      .from('Holiday')
+      .select()
+      .eq('Day', date.getDate)
+      .eq('Month', date.getMonth)
+      .eq('Year', date.getFullYear)
+      .eq('Active', true);
+    if (error || _.isEmpty(data)) {
+      return null;
     }
     return _.first(data);
   }

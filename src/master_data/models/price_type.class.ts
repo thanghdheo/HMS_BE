@@ -3,4 +3,5 @@ export class PriceType {
   Name: string;
   Code: string;
   Active: boolean;
+  Value: number;
 }

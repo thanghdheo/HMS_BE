@@ -1,3 +1,6 @@
+import { PriceType } from 'src/master_data/models/price_type.class';
+import { Room } from 'src/master_data/models/room.class';
+
 export class RoomActivities {
   Id: number;
   RoomId: number;
@@ -10,4 +13,6 @@ export class RoomActivities {
   TotalPrice: number;
   Description: string;
   Deposit: number;
+  Room: Room;
+  PriceType: PriceType;
 }

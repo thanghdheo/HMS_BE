@@ -143,6 +143,7 @@ export class MasterDataController {
   async getAllRoom(
     @Query()
     query: {
+      statusId: number;
       hotelId: number;
       keywords: string;
       limit: number;
@@ -153,6 +154,7 @@ export class MasterDataController {
     var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     return this.masterDataService.getAllRoom(
       companyId,
+      query.statusId,
       query.hotelId,
       query.keywords,
       query.limit,

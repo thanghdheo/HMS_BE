@@ -8,6 +8,9 @@ import { RoomActivities } from '../models/room_activities.class';
 import * as _ from 'lodash';
 import { StatusCode } from 'src/master_data/models/status_code.enum';
 import { MasterDataService } from 'src/master_data/services/master_data.service';
+import { DayTypeCode } from 'src/master_data/models/day_type.enum';
+import { PriceTypeCode } from 'src/master_data/models/price_type.enum';
+import { RoomTypeCode } from 'src/master_data/models/room_type.enum';
 
 @Injectable()
 export class WorkflowService {
@@ -76,7 +79,9 @@ export class WorkflowService {
   async getRoomActivitiesById(id: number): Promise<RoomActivities> {
     const { data, error } = await (await this.supabase.getClient())
       .from('RoomActivities')
-      .select()
+      .select(
+        '*, Room: RoomId (*, RoomType: TypeId(*)), PriceType: PriceTypeId (*)',
+      )
       .eq('Id', id);
     if (error) {
       throw new InternalServerErrorException(error.message);
@@ -106,5 +111,70 @@ export class WorkflowService {
       throw new InternalServerErrorException(error.message);
     }
     return _.isEmpty(data) ? 'fail' : 'success';
+  }
+
+  async calculatePrice(
+    roomActivities: RoomActivities,
+    companyId: number,
+  ): Promise<number> {
+    var priceResult = 0;
+    const { data, error } = await (await this.supabase.getClient())
+      .from('RoomActivities')
+      .select(
+        '*, Room: RoomId (*, RoomType: TypeId(*)), PriceType: PriceTypeId (*)',
+      )
+      .eq('Id', roomActivities.Id);
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    if (_.isEmpty(data)) {
+      throw new NotFoundException('Room Activities not found');
+    }
+    let diffTime = Math.abs(
+      new Date(roomActivities.TimeOut).valueOf() -
+        new Date(roomActivities.TimeIn).valueOf(),
+    );
+    let days = diffTime / (24 * 60 * 60 * 1000);
+    let hours = (days % 1) * 24;
+
+    var priceTypeId = roomActivities.PriceTypeId;
+    var priceTypes = await this.masterDataService.getAllPriceType();
+    var priceType = priceTypes.find((x) => x.Id == priceTypeId);
+    if (priceType.Code == PriceTypeCode.HOUR) {
+      var delta = Math.round(hours);
+      var priceTypeHour = priceTypes.find(
+        (x) => x.Value == (delta >= 4 ? 4 : delta),
+      );
+      priceTypeId = priceTypeHour.Id;
+    }
+    var currentDate = new Date();
+    var holiday = await this.masterDataService.getHolidayByDate(currentDate);
+    var price = await this.masterDataService.getPriceByPriceTypeId(
+      priceTypeId,
+      companyId,
+      holiday ? DayTypeCode.HOLIDAY : DayTypeCode.NORMAL,
+    );
+    var roomActivitiesResult = _.first(data) as RoomActivities;
+    if (roomActivitiesResult.Room.RoomType.Code == RoomTypeCode.STANDARD) {
+      if (roomActivitiesResult.Room.Beds == 1) {
+        priceResult = price.Normal1Beg;
+      } else if (roomActivitiesResult.Room.Beds == 2) {
+        priceResult = price.Normal2Beg;
+      } else if (roomActivitiesResult.Room.Beds == 3) {
+        priceResult = price.Normal3Beg;
+      }
+    } else {
+      if (roomActivitiesResult.Room.Beds == 1) {
+        priceResult = price.VIP1Beg;
+      } else if (roomActivitiesResult.Room.Beds == 2) {
+        priceResult = price.VIP2Beg;
+      } else if (roomActivitiesResult.Room.Beds == 3) {
+        priceResult = price.VIP3Beg;
+      }
+    }
+    return (
+      priceResult *
+      (priceType.Code == PriceTypeCode.HOUR ? 1 : Math.floor(days) + 1)
+    );
   }
 }
