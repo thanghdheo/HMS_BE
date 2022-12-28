@@ -101,7 +101,7 @@ export class AuthService {
 
     const { error: errorUpdate } = await (
       await this.supabase.getClient()
-    ).auth.admin.updateUserById(_.first(dataUser).Email, {
+    ).auth.admin.updateUserById(_.first(dataUser).UserId, {
       password: newPassword,
     });
     if (errorUpdate) {
