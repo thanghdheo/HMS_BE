@@ -327,6 +327,10 @@ export class MasterDataService {
   async updateRoom(room: Room): Promise<any> {
     var id = room.Id ? room.Id : 0;
     delete room.Id;
+    delete room.RoomType;
+    delete room.Hotel;
+    delete room.Status;
+    delete room.RoomActivities;
     const { data, error } = await (await this.supabase.getClient())
       .from('Room')
       .select()
