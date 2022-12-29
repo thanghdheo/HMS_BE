@@ -177,4 +177,55 @@ export class WorkflowService {
       (priceType.Code == PriceTypeCode.HOUR ? 1 : Math.floor(days) + 1)
     );
   }
+
+  async updateRoomActivities(roomActivities: RoomActivities): Promise<any> {
+    var id = roomActivities.Id ? roomActivities.Id : 0;
+    delete roomActivities.Id;
+    delete roomActivities.PriceType;
+    delete roomActivities.Room;
+    const { data, error } = await (await this.supabase.getClient())
+      .from('RoomActivities')
+      .select()
+      .eq('Id', id);
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+    if (_.isEmpty(data)) {
+      throw new NotFoundException('Room Activities not found');
+    }
+
+    const { data: data2, error: error2 } = await (
+      await this.supabase.getClient()
+    )
+      .from('RoomActivities')
+      .update(roomActivities)
+      .match({ Id: id })
+      .select();
+    if (error2) {
+      throw new InternalServerErrorException(error2.message);
+    }
+    return data2;
+  }
+
+  async checkIn(id: number): Promise<any> {
+    var roomActivities = await this.getRoomActivitiesById(id);
+    var room = await this.masterDataService.getRoomById(roomActivities.RoomId);
+    var status = await this.masterDataService.getStatusByCode(StatusCode.BUSY);
+    room.StatusId = status.Id;
+    room.RoomActivityId = null;
+    await this.masterDataService.updateRoom(room);
+    return 'success';
+  }
+
+  async finishedCleaning(id: number): Promise<any> {
+    var roomActivities = await this.getRoomActivitiesById(id);
+    var room = await this.masterDataService.getRoomById(roomActivities.RoomId);
+    var status = await this.masterDataService.getStatusByCode(
+      StatusCode.AVAILABLE,
+    );
+    room.StatusId = status.Id;
+    room.RoomActivityId = null;
+    await this.masterDataService.updateRoom(room);
+    return 'success';
+  }
 }

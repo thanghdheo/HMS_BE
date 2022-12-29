@@ -18,7 +18,7 @@ export class WorkflowController {
   }
 
   @Post('checkOut')
-  updateRoomActivities(@Body() roomActivities: RoomActivities): any {
+  checkOut(@Body() roomActivities: RoomActivities): any {
     this.logger.log('CheckOut');
     return this.workflowService.checkOut(roomActivities);
   }
@@ -32,7 +32,7 @@ export class WorkflowController {
 
   @Post('cancelBooking')
   deleteRoomActivitiesById(@Body() data): any {
-    this.logger.log('delete RoomActivities By Ids');
+    this.logger.log('delete Room Activities By Ids');
     return this.workflowService.cancel(data.Id);
   }
 
@@ -41,5 +41,23 @@ export class WorkflowController {
     this.logger.log('calculate Price');
     var companyId = await (await this.supabase.getCurrentUser()).CompanyId;
     return this.workflowService.calculatePrice(roomActivities, companyId);
+  }
+
+  @Post('updateRoomActivities')
+  updateRoomActivities(@Body() roomActivities: RoomActivities): any {
+    this.logger.log('update RoomActivities');
+    return this.workflowService.updateRoomActivities(roomActivities);
+  }
+
+  @Post('checkIn')
+  checkIn(@Body() data): any {
+    this.logger.log('checkIn Room Activities By Ids');
+    return this.workflowService.checkIn(data.Id);
+  }
+
+  @Post('finishedCleaning')
+  finishedCleaning(@Body() data): any {
+    this.logger.log('finished Cleaning RoomActivities By Ids');
+    return this.workflowService.finishedCleaning(data.Id);
   }
 }
