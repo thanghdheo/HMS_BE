@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { SupabaseModule } from 'src/common/supabase';
-import { MasterDataService } from 'src/master_data/services/master_data.service';
+import { SupabaseModule } from '../common/supabase';
+import { MasterDataService } from '../master_data/services/master_data.service';
 import { WorkflowController } from './controllers/workflow.controller';
 import { WorkflowService } from './services/workflow.service';
 

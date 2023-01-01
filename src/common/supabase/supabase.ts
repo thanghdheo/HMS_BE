@@ -12,8 +12,8 @@ import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { JwtService } from '@nestjs/jwt';
 import * as _ from 'lodash';
-import { JwtPayload } from 'src/auth/models/jwt_payload.class';
-import { User } from 'src/auth/models/user.class';
+import { JwtPayload } from '../../auth/models/jwt_payload.class';
+import { User } from '../../auth/models/user.class';
 import { ExtractJwt } from 'passport-jwt';
 
 @Injectable({ scope: Scope.REQUEST })

@@ -14,7 +14,7 @@ import { Room } from '../models/room.class';
 import { Customer } from '../models/customer.class';
 import { Price } from '../models/price.class';
 import { Holiday } from '../models/holiday.class';
-import { Supabase } from 'src/common/supabase';
+import { Supabase } from '../../common/supabase';
 
 @Controller('master-data')
 export class MasterDataController {

@@ -1,4 +1,4 @@
-import { BaseDto } from 'src/common/models/base.dto';
+import { BaseDto } from '../../common/models/base.dto';
 
 export class Customer extends BaseDto {
   CMND: string;
