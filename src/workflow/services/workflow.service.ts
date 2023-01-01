@@ -3,14 +3,14 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { Supabase } from 'src/common/supabase';
+import { Supabase } from '../../common/supabase';
 import { RoomActivities } from '../models/room_activities.class';
 import * as _ from 'lodash';
 import { StatusCode } from 'src/master_data/models/status_code.enum';
-import { MasterDataService } from 'src/master_data/services/master_data.service';
-import { DayTypeCode } from 'src/master_data/models/day_type.enum';
-import { PriceTypeCode } from 'src/master_data/models/price_type.enum';
-import { RoomTypeCode } from 'src/master_data/models/room_type.enum';
+import { MasterDataService } from '../../master_data/services/master_data.service';
+import { DayTypeCode } from '../../master_data/models/day_type.enum';
+import { PriceTypeCode } from '../../master_data/models/price_type.enum';
+import { RoomTypeCode } from '../../master_data/models/room_type.enum';
 
 @Injectable()
 export class WorkflowService {

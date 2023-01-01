@@ -3,9 +3,9 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { Supabase } from 'src/common/supabase';
+import { Supabase } from '../../common/supabase';
 import * as _ from 'lodash';
-import { DataResponse } from 'src/common/models/data_res.class';
+import { DataResponse } from '../../common/models/data_res.class';
 import { User } from '../models/user.class';
 
 @Injectable()

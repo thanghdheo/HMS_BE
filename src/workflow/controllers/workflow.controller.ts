@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
-import { Supabase } from 'src/common/supabase';
+import { Supabase } from '../../common/supabase';
 import { RoomActivities } from '../models/room_activities.class';
 import { WorkflowService } from '../services/workflow.service';
 

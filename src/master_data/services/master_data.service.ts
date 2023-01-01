@@ -3,9 +3,9 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { Supabase } from 'src/common/supabase';
+import { Supabase } from '../../common/supabase';
 import * as _ from 'lodash';
-import { DataResponse } from 'src/common/models/data_res.class';
+import { DataResponse } from '../../common/models/data_res.class';
 import { Company } from '../models/company.class';
 import { Hotel } from '../models/hotel.class';
 import { Room } from '../models/room.class';
