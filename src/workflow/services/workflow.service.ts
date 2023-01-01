@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Supabase } from '../../common/supabase';
-import { RoomActivities } from '../models/room_activities.class';
+import { RoomActivities } from '../model/room_activities.class';
 import * as _ from 'lodash';
 import { StatusCode } from '../../master_data/models/status_code.enum';
 import { MasterDataService } from '../../master_data/services/master_data.service';

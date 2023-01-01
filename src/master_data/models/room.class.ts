@@ -1,5 +1,5 @@
 import { BaseDto } from '../../common/models/base.dto';
-import { RoomActivities } from '../../workflow/models/room_activities.class';
+import { RoomActivities } from '../../workflow/model/room_activities.class';
 import { Hotel } from './hotel.class';
 import { RoomType } from './room_type.class';
 import { Status } from './status.class';
