@@ -136,6 +136,12 @@ export class MasterDataController {
     return this.masterDataService.getAllPriceType();
   }
 
+  @Get('getAllPriceTypeByCalculate')
+  getAllPriceTypeByCalculate() {
+    this.logger.log('GET all Price Type by Calculate');
+    return this.masterDataService.getAllPriceTypeByCalculate();
+  }
+
   //#endregion
 
   //#region Room

@@ -138,7 +138,7 @@ export class WorkflowService {
     let hours = (days % 1) * 24;
 
     var priceTypeId = roomActivities.PriceTypeId;
-    var priceTypes = await this.masterDataService.getAllPriceTypeByCalculate();
+    var priceTypes = await this.masterDataService.getAllPriceType();
     var priceType = priceTypes.find((x) => x.Id == priceTypeId);
     if (priceType.Code == PriceTypeCode.HOUR) {
       var delta = Math.round(hours);

@@ -236,7 +236,6 @@ export class MasterDataService {
     let query = (await this.supabase.getClient())
       .from('PriceType')
       .select()
-      .eq('Value', 0)
       .eq('Active', true);
     const { data, error } = await query;
     if (error) {
@@ -249,6 +248,7 @@ export class MasterDataService {
     let query = (await this.supabase.getClient())
       .from('PriceType')
       .select()
+      .eq('Value', 0)
       .eq('Active', true);
     const { data, error } = await query;
     if (error) {
