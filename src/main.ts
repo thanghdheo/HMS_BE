@@ -4,8 +4,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    allowedHeaders: '*',
-    origin: '*',
+    allowedHeaders: ['content-type'],
+    origin: 'https://hotel-management-1bgq.vercel.app',
     credentials: true,
   });
   app.setGlobalPrefix('api');
