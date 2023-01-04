@@ -1,18 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+const cors = require('cors');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const options = {
-    origin: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    credentials: true,
-    allowedHeaders: '*',
+  var corsOptions = {
+    origin: [
+      `http://localhost:3000`,
+      `https://hotel-management-1bgq.vercel.app`,
+    ],
   };
-  app.enableCors(options);
+  const app = await NestFactory.create(AppModule);
+  app.use(cors(corsOptions));
   app.setGlobalPrefix('api');
-  //app.use(morgan('tiny', { stream: logStream }));
   await app.listen(parseInt(process.env.PORT));
 }
 bootstrap();
