@@ -9,9 +9,9 @@ async function bootstrap() {
       `https://hotel-management-1bgq.vercel.app`,
     ],
   };
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.use(cors(corsOptions));
   app.setGlobalPrefix('api');
-  await app.listen(3000);
+  await app.listen(parseInt(process.env.PORT));
 }
 bootstrap();
